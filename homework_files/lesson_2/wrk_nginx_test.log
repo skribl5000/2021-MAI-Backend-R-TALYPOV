@@ -1,0 +1,10 @@
+(venv) ruslan@MacBook-Pro-Ruslan 2021-MAI-Backend-R-TALYPOV % wrk -t12 -c400 -d30s http://localhost:8080/
+Running 30s test @ http://localhost:8080/
+  12 threads and 400 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    22.19ms    4.05ms  64.76ms   86.92%
+    Req/Sec     1.49k   195.95     2.79k    81.78%
+  535325 requests in 30.04s, 199.61MB read
+  Socket errors: connect 0, read 368, write 0, timeout 0
+Requests/sec:  17820.48
+Transfer/sec:      6.64MB
