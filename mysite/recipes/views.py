@@ -2,7 +2,18 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from recipes.models import Recipe, RecipeType
+from rest_framework import viewsets
+from .serializers import RecipeSerializer, RecipeTypeSerializer
+from django.contrib.auth.decorators import login_required
 
+class RecipeViewSet(viewsets.ModelViewSet):
+    queryset = Recipe.objects.all().order_by('id')
+    serializer_class = RecipeSerializer
+
+
+class RecipeTypeViewSet(viewsets.ModelViewSet):
+    queryset = RecipeType.objects.all().order_by('id')
+    serializer_class = RecipeTypeSerializer
 
 @require_http_methods(["GET", "POST"])
 def recipe_list(request):
@@ -25,6 +36,8 @@ def recipe_list(request):
     return response
 
 
+
+@login_required(login_url='/')
 @require_http_methods(["GET", "POST"])
 def recipe_detail(request, *args, **kwargs):
     recipe_id = kwargs.get('recipe_id', None)
@@ -45,8 +58,12 @@ def recipe_detail(request, *args, **kwargs):
             'description': recipe.recipe_description,
             'type': recipe.recipe_type.recipe_type_name
         }
+        response_json = {
+            'user': request.user.username,
+            'data': data
+        }
         response = JsonResponse(
-            data,
+            response_json,
             status=200
         )
     else:
@@ -54,7 +71,6 @@ def recipe_detail(request, *args, **kwargs):
             {'error': f'recipe with id {recipe_id} not found'},
             status=404
         )
-
     return response
 
 

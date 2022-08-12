@@ -15,8 +15,26 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include, re_path
+from rest_framework import routers
+from django.conf.urls import url
+from django.views.generic import TemplateView
+from django.contrib.auth.views import LogoutView
+
+from recipes.views import *
+from uploadS3App.views import *
+
+
+router1 = routers.DefaultRouter()
+router1.register('recipes', RecipeViewSet)
+router1.register('recipe_types', RecipeTypeViewSet)
+router1.register('upload_S3', UploadS3ViewSet, 'upload_S3')
 
 urlpatterns = [
+    path('api/', include(router1.urls)),
     path('admin/', admin.site.urls),
-    path('recipes/', include('recipes.urls'))
+    path('recipes/', include('recipes.urls')),
+    path('search/', include('search.urls')),
+    path('', TemplateView.as_view(template_name="index.html")),
+    path('accounts/', include('allauth.urls')),
+    path('logout', LogoutView.as_view()),
 ]
